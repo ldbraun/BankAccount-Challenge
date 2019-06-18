@@ -1,6 +1,7 @@
 "use strict";
 
-let depositTimes = new WeakMap();
+let depositTimes = 0,
+    withdrawalTimes = 0;
 
 class BankAccount {
     constructor() {
@@ -8,7 +9,7 @@ class BankAccount {
     }
 
     //Handles the Balance Enquiry Endpoint
-    balance() {
+    get balance() {
         return(this.acc_balance);
     }
 
@@ -32,7 +33,19 @@ class BankAccount {
 
     //Handles the Withdrawal Endpoint
     withdraw(amount) {
+        this.amount = amount;
+        const maxWithdrawalPerDay = 50000;
+        const maxWithdrawalPerTxn = 20000;
+        const maxWithdrawalFreq = 3;
 
+        if(this.amount > maxWithdrawalPerDay) {
+            throw new Error("Exceeded Maximum Withdrawal Per Day");
+        } else if(this.amount > maxWithdrawalPerTxn ) {
+            throw new Error("Exceeded Maximum Withdrawal Per Transaction");
+        } else if(withdrawalTimes > maxWithdrawalFreq) {
+            throw new Error("Exceeded Maximum Withdrawal Frequency");
+        }
+        this.acc_balance = this.acc_balance - amount;
     }
 }
 
